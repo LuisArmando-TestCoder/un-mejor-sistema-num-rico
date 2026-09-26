@@ -73,3 +73,49 @@ exportan las piezas: `generarPrefijoLatino(orden)` para obtener la raíz del
 nivel n, y `numeroAWords(bigint)` para leer cantidades en palabras (usa la
 escala larga estándar solo para leer las cantidades internas de cada bloque,
 que es como se lee español fluido).
+
+## Tests (Deno)
+
+El archivo `index_test.ts` cubre 11 casos: números por debajo de un millón,
+las unidades base del sistema, plurales, residuos con " con ", un número
+mixto grande, entrada por `string`, rechazo de negativos, el convertidor
+auxiliar `numeroAWords`, los prefijos generativos y un nivel profundo
+(orden 11, 10^6144).
+
+Ejecución:
+
+```sh
+deno test --allow-all index_test.ts
+```
+
+Salida esperada (resumida):
+
+```
+running 11 tests from ./index_test.ts
+traducir: números por debajo de un millón ... ok
+traducir: unidades base del sistema exponencial ... ok
+traducir: plurals ... ok
+traducir: residuos con ' con ' ... ok
+traducir: número mixto grande ... ok
+traducir: acepta string ... ok
+traducir: rechaza negativos ... ok
+numeroAWords: escala larga estándar para leer cantidades ... ok
+generarPrefijoLatino: base y generativo ... ok
+generarPrefijoLatino: rechaza órdenes inválidos ... ok
+traducir: nivel generativo profundo (orden 11, 10^6144) ... ok
+
+ok | 11 passed | 0 failed (6ms)
+```
+
+## Pipeline completo
+
+El script `run-pipeline.sh` regenera un log íntegro del pipeline en
+`pipeline.log`: encabezado con versión de Deno y revisión de git, `deno check`,
+los tests con nivel de log `debug`, una tabla de prefijos para los niveles
+1..500, una cascada de traducciones de números crecientes, 200 números mixtos
+de estrés, y el volcado completo de `index.ts` e `index_test.ts`.
+
+```sh
+./run-pipeline.sh
+# -> pipeline.log écrit : 1141 lines, 139701 octets
+```
